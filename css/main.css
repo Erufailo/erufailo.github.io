@@ -1,0 +1,88 @@
+body, html, {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 18px;
+}
+
+body {
+  background-color: rgb(247, 247, 242);
+}
+
+h1, h2, h3, h4, h5 {
+  margin: 0;
+  font-family: 'Raleway', sans-serif;
+}
+
+p {
+  font-family: 'Crimson Text', serif;
+}
+
+h1 {
+  font-size: 1.8em;
+}
+
+h4 {
+  font-size: 1.3em;
+  margin-bottom: 5px;
+}
+
+a {
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+  font-weight: bold;
+  background-color: rgba(220, 227, 245, 0.356);
+  font-size: 1.1em;
+}
+
+header, footer, section, article, div {
+  box-sizing: border-box;
+}
+
+.header {
+  height: 140px;
+}
+
+#title, #subtitle {
+  text-align: right;
+}
+
+#title {
+  font-size: 2em;
+}
+
+#subtitle {
+  font-size: 1.5em;
+}
+
+.hr-line {
+  height: 5px;
+  background-color: #7d97ad;
+}
+
+.main-image {
+  max-width: 100%;
+}
+
+.section-title {
+  color: #7d97ad;
+  letter-spacing: 2px;
+}
+
+.projects {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.article {
+  margin-bottom: 30px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.article-image {
+  max-width: 100%;
+  min-height: 180px;
+}
