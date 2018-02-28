@@ -68,6 +68,7 @@ header, footer, section, article, div {
 .section-title {
   color: #7d97ad;
   letter-spacing: 2px;
+  font-size:1.8em;
 }
 
 .projects {
