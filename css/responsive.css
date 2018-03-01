@@ -4,19 +4,14 @@
 }
 
 @media screen and (min-width: 460px) {
-  .header {
-    height: 80px;
-  }
-  .header-logo {
-    float: left;
+  .logo {
+    justify-self: flex-start;
   }
   .header-title {
-    box-sizing: border-box;
-    float: right;
+    justify-self: flex-end;
   }
   #title, #subtitle {
     font-family: 'Raleway', sans-serif;
-    text-align: right;
   }
   #title {
     font-size: 2.5em;
@@ -26,17 +21,14 @@
   }
 }
 
-@media screen and (min-width: 550px) and (max-width:799px) {
+@media screen and (min-width: 500px) and (max-width:799px) {
   p {
     font-size: 1.1em;
   }
   .article {
     margin-right: auto;
     margin-left: auto;
-    width: 550px;
-  }
-  .article-image {
-    max-width: 100%;
+    width: 500px;
   }
 }
 
@@ -46,15 +38,6 @@
   }
   .article {
     width: 32%;
-    margin-right: 15px;
-    float: left;
-  }
-  .article:last-of-type {
-    margin-right: 0;
-  }
-  .article-image {
-    max-width: 100%;
-    min-height: 180px;
   }
   .content {
     width: 800px;
