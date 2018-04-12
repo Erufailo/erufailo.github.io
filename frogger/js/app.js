@@ -9,6 +9,7 @@ var Enemy = function () {
     this.x = -150;
     this.y = randomEnemyPosition();
     this.speed = getRandomNumberBetween(3, 7);
+    
 
 };
 
@@ -24,6 +25,12 @@ Enemy.prototype.update = function (dt) {
         console.log("collision");
         player.getPlayer().x = 202;
         player.getPlayer().y = 390;
+        if (player.getPlayer().collisions>=0) {
+            const heart = document.querySelectorAll(".heart")[player.getPlayer().collisions];
+            heart.removeAttribute("src");
+            heart.setAttribute("src", "images/heart-empty.png");
+            player.getPlayer().collisions-=1;
+        }
     }
 
     if (this.x > 600) {
@@ -48,6 +55,7 @@ class Player {
         this.sprite = 'images/char-boy.png';
         this.x = 202;
         this.y = 390;
+        this.collisions = 2;
     }
 
     update() {
@@ -90,20 +98,28 @@ class Player {
 }
 class Collectible {
     constructor() {
-        this.x = (getRandomNumberBetween(1,5)-1) * TILE_WIDTH;
-        this.y = getRandomNumberBetween(1,3) * TILE_HEIGHT;
+        this.x = (getRandomNumberBetween(1, 5) - 1) * TILE_WIDTH;
+        this.y = getRandomNumberBetween(1, 3) * TILE_HEIGHT;
         this.sprite = "images/Gem-Blue1.png";
-        this.collected = false;
+        this.collected = 0;
     }
     render() {
-        if (!this.collected){
+        if (this.collected < 3) {
             ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
         }
     }
     update() {
         if (player.getPlayer().x === this.x && player.getPlayer().y + 25 === this.y) {
             console.log("gem collision");
-            this.collected = true;
+            this.collected++;
+            if (this.collected <= 3) {
+                this.x = (getRandomNumberBetween(1, 5) - 1) * TILE_WIDTH;
+                this.y = getRandomNumberBetween(1, 3) * TILE_HEIGHT;
+                document.querySelector(".gems").textContent = "Collected Gems: " + this.collected + "/3";
+            } else {
+                this.x = -100;
+                this.y = -100;
+            }
         }
     }
 }
@@ -117,23 +133,35 @@ const TILE_HEIGHT = 83;
 let player = new Player();
 let allEnemies = [];
 let numberOfEnemies = 3;
+let timerID;
 for (let i = 0; i < numberOfEnemies; i++) {
     allEnemies.push(new Enemy());
 }
 let collectible = new Collectible();
+timerID = setInterval(timer, 1000);
 
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
+document.addEventListener('keydown', function (e) {
+
+    if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+    }
+
+});
 document.addEventListener('keyup', function (e) {
+
     var allowedKeys = {
         37: 'left',
         38: 'up',
         39: 'right',
         40: 'down'
     };
-
-    player.handleInput(allowedKeys[e.keyCode]);
+    if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+        player.handleInput(allowedKeys[e.keyCode]);
+    }
 });
 
 function randomEnemyPosition() {
@@ -150,4 +178,18 @@ function randomEnemyPosition() {
 
 function getRandomNumberBetween(min, max) {
     return Math.floor(Math.random() * max) + min;
+}
+
+let s = 0; //seconds
+let m = 0; //minutes
+function timer() {
+    ++s;
+    m = Math.floor(s / 60);
+    let timer = document.querySelector(".timer");
+    if (s % 60 < 10) {// checks if a second is one or two digits
+        timer.textContent = "Elapsed Time: " + m + ":0" + s % 60;
+    } else {
+        timer.textContent = "Elapsed Time: " + m + ":" + s % 60;
+    }
+
 }
