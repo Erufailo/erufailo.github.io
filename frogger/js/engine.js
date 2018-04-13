@@ -13,7 +13,7 @@
  * writing app.js a little simpler to work with.
  */
 
-var Engine = (function(global) {
+var Engine = (function (global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
@@ -64,7 +64,7 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset();
+        //reset();
         lastTime = Date.now();
         main();
     }
@@ -91,11 +91,13 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
-        allEnemies.forEach(function(enemy) {
-            enemy.update(dt);
-        });
-        player.update();
-        collectible.update();
+        if (player.getPlayer().lives !== 0 && play === true) {
+            allEnemies.forEach(function (enemy) {
+                enemy.update(dt);
+            });
+            player.update();
+            collectible.update();
+        }
     }
 
     /* This function initially draws the "game level", it will then call
@@ -109,19 +111,19 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
-            ],
+            'images/water-block.png',   // Top row is water
+            'images/stone-block.png',   // Row 1 of 3 of stone
+            'images/stone-block.png',   // Row 2 of 3 of stone
+            'images/stone-block.png',   // Row 3 of 3 of stone
+            'images/grass-block.png',   // Row 1 of 2 of grass
+            'images/grass-block.png'    // Row 2 of 2 of grass
+        ],
             numRows = 6,
             numCols = 5,
             row, col;
-        
+
         // Before drawing, clear existing canvas
-        ctx.clearRect(0,0,canvas.width,canvas.height)
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
 
         /* Loop through the number of rows and columns we've defined above
          * and, using the rowImages array, draw the correct image for that
@@ -151,12 +153,13 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
-        allEnemies.forEach(function(enemy) {
+        collectible.render();
+        allEnemies.forEach(function (enemy) {
             enemy.render();
         });
 
         player.render();
-        collectible.render();
+
     }
 
     /* This function does nothing but it could have been a good place to
@@ -164,9 +167,27 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
-    }
+        s = 0;
+        t = 0;
+        play = true;
+        document.querySelector(".timer").textContent = "Elapsed Time: 0:00";
+        document.querySelector(".gems").textContent = "Collected Gems: 0/3";
+        const hearts = document.querySelectorAll(".heart");
+        for (let heart of hearts) {
+            heart.removeAttribute("src");
+            heart.setAttribute("src", "images/heart-full.png");
+        }
 
+        allEnemies.forEach(function (enemy) {
+            enemy.reset();
+        });
+        player.reset();
+        collectible.reset();
+        timerID = setInterval(timer, 1000);
+        toggleModal();
+    }
+    const resetButton = document.querySelector(".new-game");
+    resetButton.addEventListener("click", reset);
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
      * all of these images are properly loaded our game will start.

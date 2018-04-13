@@ -9,7 +9,7 @@ var Enemy = function () {
     this.x = -150;
     this.y = randomEnemyPosition();
     this.speed = getRandomNumberBetween(3, 7);
-    
+
 
 };
 
@@ -25,11 +25,12 @@ Enemy.prototype.update = function (dt) {
         console.log("collision");
         player.getPlayer().x = 202;
         player.getPlayer().y = 390;
-        if (player.getPlayer().collisions>=0) {
+        if (player.getPlayer().collisions >= 0) {
             const heart = document.querySelectorAll(".heart")[player.getPlayer().collisions];
             heart.removeAttribute("src");
             heart.setAttribute("src", "images/heart-empty.png");
-            player.getPlayer().collisions-=1;
+            player.getPlayer().collisions -= 1;
+            player.getPlayer().lives -= 1;
         }
     }
 
@@ -47,6 +48,12 @@ Enemy.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+Enemy.prototype.reset = function() {
+    this.x = -150;
+    this.y = randomEnemyPosition();
+    this.speed = getRandomNumberBetween(3, 7);
+};
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
@@ -56,15 +63,24 @@ class Player {
         this.x = 202;
         this.y = 390;
         this.collisions = 2;
+        this.lives = 3;
     }
 
     update() {
-        if (this.y < 58) {//win condition
-            console.log("win");
-            setTimeout(() => {
-                this.x = 202;
-                this.y = 390;
-            }, 100);
+        if (collectible.getCollectibles() === 3) {
+            if (this.y < 58) {//win condition
+                console.log("win");
+                setTimeout(() => {
+                    this.x = 202;
+                    this.y = 390;
+                }, 100);
+                createModal(true);
+                play = false;
+            }
+        } else {
+            if (this.y < 58) {
+                this.y = 58;
+            }
         }
         if (this.x > 404) {//restrain player to canvas
             this.x = 404;
@@ -73,27 +89,40 @@ class Player {
         } else if (this.y > 390) {
             this.y = 390;
         }
+        if (this.lives === 0) { // lose
+            console.log("lose");
+            createModal(false);
+            play=false;
+        }
     }
     render() {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
     handleInput(key) {
-        if (key === "up") {
-            this.y -= 83;
-            console.log("up");
-        } else if (key === "down") {
-            this.y += 83;
-            console.log("down");
-        } else if (key === "left") {
-            this.x -= 101;
-            console.log("left");
-        } else if (key === "right") {
-            this.x += 101;
-            console.log("right");
+        if (play === true) {
+            if (key === "up") {
+                this.y -= 83;
+                console.log("up");
+            } else if (key === "down") {
+                this.y += 83;
+                console.log("down");
+            } else if (key === "left") {
+                this.x -= 101;
+                console.log("left");
+            } else if (key === "right") {
+                this.x += 101;
+                console.log("right");
+            }
         }
     }
     getPlayer() {
         return this;
+    }
+    reset() {
+        this.x = 202;
+        this.y = 390;
+        this.collisions = 2;
+        this.lives = 3;
     }
 }
 class Collectible {
@@ -116,11 +145,19 @@ class Collectible {
                 this.x = (getRandomNumberBetween(1, 5) - 1) * TILE_WIDTH;
                 this.y = getRandomNumberBetween(1, 3) * TILE_HEIGHT;
                 document.querySelector(".gems").textContent = "Collected Gems: " + this.collected + "/3";
+
+
             } else {
                 this.x = -100;
                 this.y = -100;
             }
         }
+    }
+    getCollectibles() {
+        return this.collected;
+    }
+    reset() {
+        this.collected = 0;
     }
 }
 
@@ -130,15 +167,17 @@ class Collectible {
 // Place the player object in a variable called player
 const TILE_WIDTH = 101;
 const TILE_HEIGHT = 83;
-let player = new Player();
+let player;
 let allEnemies = [];
 let numberOfEnemies = 3;
 let timerID;
+let play = false;
+let collectible;
+player = new Player();
+collectible = new Collectible();
 for (let i = 0; i < numberOfEnemies; i++) {
     allEnemies.push(new Enemy());
 }
-let collectible = new Collectible();
-timerID = setInterval(timer, 1000);
 
 
 // This listens for key presses and sends the keys to your
@@ -158,6 +197,10 @@ document.addEventListener('keyup', function (e) {
         39: 'right',
         40: 'down'
     };
+    if (e.keyCode === 32) {
+        startGame();
+    }
+
     if ([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
         e.preventDefault();
         player.handleInput(allowedKeys[e.keyCode]);
@@ -193,3 +236,39 @@ function timer() {
     }
 
 }
+
+function createModal(win) {
+    const heading = document.querySelector(".modal-heading");
+    const stats = document.querySelector(".stats");
+    if (win) {
+        heading.textContent = "Congratulations! You Won!!"
+    } else {
+        heading.textContent = "You lost! Better luck next time!"
+    }
+    toggleModal();
+    clearInterval(timerID);
+}
+
+//Modal code from https://sabe.io/tutorials/how-to-create-modal-popup-box
+const modal = document.querySelector(".modal");
+const closeButton = document.querySelector(".close-button");
+
+function toggleModal() {
+    modal.classList.toggle("show-modal");
+}
+
+function windowOnClick(event) {
+    if (event.target === modal) {
+        toggleModal();
+    }
+}
+
+closeButton.addEventListener("click", toggleModal);
+window.addEventListener("click", windowOnClick);
+
+function startGame() {
+    play = true;
+    timerID = setInterval(timer, 1000);
+    document.querySelector(".instructions").classList.add("invisible");
+}
+
