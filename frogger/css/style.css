@@ -72,7 +72,7 @@ canvas {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgb(241, 241, 241);
+    background-color: rgb(233, 233, 233);
     padding: 1rem 1.5rem;
     width: 35rem;
     border-radius: 0.5rem;
@@ -109,6 +109,11 @@ canvas {
     margin-top: 30px;
 }
 
+.info {
+    color: rgb(117, 117, 117);
+    margin-top: 30px;
+}
+
 .new-game {
     background: rgb(75, 189, 0);
     color: #fff;
@@ -125,8 +130,8 @@ canvas {
     width: 500px;
     height: 250px;
     margin-top: 110px;
-    
 }
-.invisible{
+
+.invisible {
     visibility: hidden;
 }
